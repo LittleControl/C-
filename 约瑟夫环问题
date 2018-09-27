@@ -1,0 +1,63 @@
+//用单循环链表解决约瑟夫环问题
+#include<stdio.h>
+#include<stdlib.h>
+#define maxsize 20
+
+typedef struct node
+{
+ 	int num;
+	int password;
+	int length;
+	struct node *next;		
+}node;
+node *L;
+node  *rear=(node*)malloc(sizeof(node));
+node Creat(node *L)
+{
+	rear->next=rear; 
+	int i,j,k,n;
+	struct node *p;
+	printf("Please intput the number you want,and don't overtake the'%d\n",maxsize);
+	scanf("%d",&n);
+	if(n>maxsize)
+		{
+			printf("It's wrong,please intput again\n");
+			scanf("%d",&n);
+			L.length=n;
+		}
+	else	
+		for(i=0;i<maxsize;i++)
+		{
+		 	printf("Please input the %d's number and the passwoed\n",i+1);				  	
+			scanf("%d&d",&j,&k);
+			p=(node *)malloc(sizeof(node));
+			p->num=j;
+			p->password=k;
+			rear->next=p;
+			p->next=rear;
+		}
+	return n;	
+}
+void Delete(node *L)
+{
+	printf("Please input the upper limit value you want\n");
+	int i,m,n=node Creat(node *L);
+	scanf("%d",&m);
+	if(m>n)
+ 	{
+		printf("It's oversteped,please input again\n");
+		scanf("%d",&m);
+	}
+ 	else
+ 	{
+ 		for(i=0;i<n;i++)
+ 		{
+		 	
+ 		}
+ 	}
+	    
+}
+int main()
+{
+	return 0;
+}
