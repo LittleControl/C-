@@ -33,12 +33,12 @@ int diff(int username[MAXSIZE],int name[MAXSIZE]);
 int diff_date(int date1[8],int date2[8]);
 int Check(Account *account,int name[MAXSIZE],int pwd[MAXSIZE]);
 void printDate(int date[8]);
-void Inquire(Userlog *userlog,int date[8],int chmod,Userlog *front);
-void Add(Userlog *userlog,int chmod);
-void Delete(Userlog *userlog,int chmod,Userlog *front);
-void Modify(Userlog *userlog,int chmod, Userlog *front);
-void Operation(Userlog *userlog,int chmod);
-void Login(Account *account,Userlog *userlog);
+void Inquire(Userlog *userlog[20],int date[8],int chmod,Userlog *front);
+void Add(Userlog *userlog[20],int chmod);
+void Delete(Userlog *userlog[20],int chmod,Userlog *front);
+void Modify(Userlog *userlog[20],int chmod, Userlog *front);
+void Operation(Userlog *userlog[20],int chmod);
+void Login(Account *account,Userlog *userlog[20]);
 void Registered(Account *account);
 int Choose();
 void init_userlog(Userlog *userlog[20])
@@ -70,7 +70,7 @@ int main(int argc, char const *argv[])
 	}
 	return 0;
 }
-void Inquire(Userlog *userlog,int date[8],int chmod,Userlog *front)
+void Inquire(Userlog *userlog[20],int date[8],int chmod,Userlog *front)
 {
 	int result=0;
 	while(userlog[chmod]!=NULL)
@@ -92,7 +92,7 @@ void Inquire(Userlog *userlog,int date[8],int chmod,Userlog *front)
 		Operation(userlog,chmod);
 	}
 }
-void Add(Userlog *userlog,int chmod)
+void Add(Userlog *userlog[20],int chmod)
 {
 	printf("Please input the expenses\n");
 	scanf("%d",&userlog[chmod]->expenses);
@@ -103,7 +103,7 @@ void Add(Userlog *userlog,int chmod)
 	userlog[chmod]=userlog[chmod]->next;
 	printf("Add Successfully!\n");
 }
-void Delete(Userlog *userlog,int chmod,Userlog *front)
+void Delete(Userlog *userlog[20],int chmod,Userlog *front)
 {
 	if(chmod==-1)
 	{
@@ -115,7 +115,7 @@ void Delete(Userlog *userlog,int chmod,Userlog *front)
 		printf("Sorry ,you don't have permisson to this operate\n");
 	}
 }
-void Modify(Userlog *userlog,int chmod, Userlog *front)
+void Modify(Userlog *userlog[20],int chmod, Userlog *front)
 {
 	if(chmod==-1)
 	{
@@ -133,7 +133,7 @@ void Modify(Userlog *userlog,int chmod, Userlog *front)
 	}
 
 }
-void Operation(Userlog *userlog,int chmod)
+void Operation(Userlog *userlog[20],int chmod)
 {
 	Userlog *front;
 	front=(Userlog*)malloc(sizeof(Userlog));
@@ -153,7 +153,7 @@ void Operation(Userlog *userlog,int chmod)
 		printf("Welcome to you \n");
 	}	
 }
-void Login(Account *account,Userlog *userlog)
+void Login(Account *account,Userlog *userlog[20])
 {
 	int name[6];
 	int pwd[6];
