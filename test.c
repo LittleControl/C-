@@ -25,8 +25,8 @@ typedef struct userlog
 	int date[8];
 	struct userlog *next;
 }Userlog;
-void init_admin(Admin *admin);
-void init_account(Account *account);
+Admin* init_admin();
+Account* init_account();
 void Assign(int array[MAXSIZE]);
 void Assign_date(int array[8]);
 int diff(int username[MAXSIZE],int name[MAXSIZE]);
@@ -41,21 +41,16 @@ void Operation(Userlog *userlog[20],int chmod);
 void Login(Account *account,Userlog *userlog[20]);
 void Registered(Account *account);
 int Choose();
-void init_userlog(Userlog *userlog[20])
-{
-	for (int i = 0; i < 20; ++i)
-	{
-		userlog[i]=(Userlog*)malloc(sizeof(Userlog));
-		userlog[i]=NULL;
-	}
-}
+void putArray(FILE *fp,int array[MAXSIZE]);
+Userlog* init_userlog();
+User* init_user();
+
 
 int main(int argc, char const *argv[])
 {
 	Account *account;
 	Userlog *userlog[20];
-	init_account(account);
-	init_userlog(userlog);
+	account=init_account();
 	printf("Welcome\n");
 	printf("Login(0) or Registered(1)?\n");
 	int tag=Choose();
@@ -94,6 +89,7 @@ void Inquire(Userlog *userlog[20],int date[8],int chmod,Userlog *front)
 }
 void Add(Userlog *userlog[20],int chmod)
 {
+	userlog[chmod]=init_userlog();
 	printf("Please input the expenses\n");
 	scanf("%d",&userlog[chmod]->expenses);
 	printf("Please input the revenue\n");
@@ -127,16 +123,20 @@ void Modify(Userlog *userlog[20],int chmod, Userlog *front)
 		Assign_date(front->next->date);
 		printf("Modify Successfully!\n");
 	}
-	else
+	if(chmod!=-2)
+	{
+
+	}
+	if(chmod=-2)
 	{
 		printf("Sorry ,you don't have permisson to this operate\n");		
 	}
 
 }
-void Operation(Userlog *userlog[20],int chmod)
+void Operation(Userlog *userlog[20],int chmod)//-1 for admin ,-2 for none,else for user 
 {
 	Userlog *front;
-	front=(Userlog*)malloc(sizeof(Userlog));
+	front=init_userlog();
 	if(chmod==-1)
 	{
 		int choice=0;
@@ -148,7 +148,7 @@ void Operation(Userlog *userlog[20],int chmod)
 		Assign_date(date);
 		Inquire(userlog,date,chmod,front);
 	}
-	else
+	else if(chmod)
 	{
 		printf("Welcome to you \n");
 	}	
@@ -161,7 +161,7 @@ void Login(Account *account,Userlog *userlog[20])
 	Assign(name);
 	printf("Please input your password\n");
 	Assign(pwd);
-	int chmod=Check(account,name,pwd);//2 for admin ,1 for user ,0 for none 
+	int chmod=Check(account,name,pwd);//-1 for admin ,-2 for none,else for user 
 	Operation(userlog,chmod);
 }
 void printDate(int date[8])
@@ -173,10 +173,17 @@ void printDate(int date[8])
 }
 void Registered(Account *account)
 {
+	account->user[account->usernum]=init_user();
+	FILE *fp=fopen("user.txt","a+");
 	printf("Please input the username you want to registered\n");
 	Assign(account->user[account->usernum]->username);
+	fputs("Username:  ",fp);
+	putArray(fp,account->user[account->usernum]->username);
+	fputs("Password:  ",fp);
 	printf("Please input the password you want to registered\n");
 	Assign(account->user[account->usernum]->password);
+	putArray(fp,account->user[account->usernum]->password);
+	fclose(fp);
 	account->usernum++;
 	printf("Registered Successfully!\n");
 	printf("Transferring to the login screen...\n");
@@ -191,22 +198,46 @@ int Choose()
 	}
 	return tag;
 }
-void init_admin(Admin *admin)
+void putArray(FILE *fp,int array[MAXSIZE])
 {
+	for (int i = 0; i < MAXSIZE; ++i)
+	{
+		fprintf(fp, "%d",array[i]);
+	}
+	fprintf(fp,"\n");
+}
+Admin* init_admin()
+{
+	Admin *admin;
+	admin=(Admin*)malloc(sizeof(Admin));
 	int name[MAXSIZE]={1,7,2,8,2,0};
 	int pwd[MAXSIZE]={0,0,0,3,2,3};
+	FILE *fp=fopen("admin.txt","w+");
+	fputs("Username:  ",fp);
+	putArray(fp,name);
+	fputs("Password:  ",fp);
+	putArray(fp,pwd);
 	for(int i=0;i<MAXSIZE;i++)
 	{
 		admin->username[i]=name[i];
 		admin->password[i]=pwd[i];
 	}
+	fclose(fp);
+	return admin;
 }
-void init_account(Account *account)
+User* init_user()
 {
+	User *user;
+	user=(User*)malloc(sizeof(User));
+	return user;
+}
+Account* init_account()
+{
+	Account *account;
 	account=(Account*)malloc(sizeof(Account));
-	account->admin=(Admin*)malloc(sizeof(Admin));
-	init_admin(account->admin);
+	account->admin=init_admin();
 	account->usernum=0;
+	return account;
 }
 void Assign(int array[MAXSIZE])
 {
@@ -246,10 +277,11 @@ int diff_date(int date1[8],int date2[8])
 			break;
 		}
 	}
+	return label;
 }
 int Check(Account *account,int name[MAXSIZE],int pwd[MAXSIZE])
 {
-	int chmod=0;
+	int chmod=-2;
 	int isadmin=diff(account->admin->username,name)+diff(account->admin->password,pwd);
 	if(isadmin==2)
 	{
@@ -268,4 +300,10 @@ int Check(Account *account,int name[MAXSIZE],int pwd[MAXSIZE])
 		}
 	}
 	return chmod;
+}
+Userlog* init_userlog()
+{
+	Userlog *userlog;
+	userlog=(Userlog*)malloc(sizeof(Userlog));
+	return userlog;
 }
